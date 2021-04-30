@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+  
+  
+<mapper namespace="bit.com.a.dao.SummerDao">
+
+
+
+<!-- 글 페이지 리스트 -->
+
+
+<select id="summerList" parameterType="bit.com.a.dto.SummerParam" resultType="bit.com.a.dto.SummerDto">
+	SELECT SEQ, ID, TITLE, CONTENT, WDATE, DEL, READCOUNT
+	FROM SUMMERNOTE
+	WHERE DEL = 0 
+	<if test="choice != null and choice != '' 
+			and search != null and search != '' ">	
+		<choose>
+			<when test="choice == 'TITLE'">
+				AND TITLE LIKE '%'||#{search}||'%' 
+			</when>
+			<when test="choice == 'CONTENT'">
+				AND CONTENT LIKE '%'||#{search}||'%' 
+			</when>
+			<when test="choice == 'ID'">
+				AND ID LIKE '%'||#{search}||'%' 
+			</when>
+		</choose>
+	</if>		
+</select>
+
+
+
+<!-- 글쓰기 -->
+<insert id="writeSummer" parameterType="bit.com.a.dto.SummerDto">
+	INSERT INTO SUMMERNOTE(SEQ, ID, TITLE, CONTENT, WDATE, DEL, READCOUNT )
+	VALUES (SUMMER_BBS.NEXTVAL,#{id},#{title},#{content},SYSDATE,0,0) 
+</insert>
+
+
+
+<!-- 디테일 페이지 -->
+
+
+<select id="detailSummer" parameterType="int" resultType="bit.com.a.dto.SummerDto">
+	SELECT SEQ, ID, TITLE, CONTENT, WDATE, DEL, READCOUNT 
+	FROM SUMMERNOTE 
+	WHERE SEQ=#{seq}
+</select>
+
+
+<!-- 글삭제 -->
+<update id="deleteSummer" parameterType="int">
+	UPDATE SUMMERNOTE
+	SET DEL=1
+	WHERE SEQ=#{seq}
+</update>
+
+
+<!-- 글수정 -->
+<update id="updateSummer" parameterType="bit.com.a.dto.SummerDto">
+	UPDATE SUMMERNOTE 
+	SET TITLE=#{title}, CONTENT=#{content} 
+	WHERE SEQ=#{seq}
+</update>
+
+
+
+</mapper>
